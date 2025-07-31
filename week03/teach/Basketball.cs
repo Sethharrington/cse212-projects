@@ -11,6 +11,7 @@
  * Each row represents the player's stats for a single season with a single team.
  */
 
+using System.ComponentModel;
 using Microsoft.VisualBasic.FileIO;
 
 public class Basketball
@@ -23,14 +24,44 @@ public class Basketball
         reader.TextFieldType = FieldType.Delimited;
         reader.SetDelimiters(",");
         reader.ReadFields(); // ignore header row
-        while (!reader.EndOfData) {
+        while (!reader.EndOfData)
+        {
             var fields = reader.ReadFields()!;
             var playerId = fields[0];
             var points = int.Parse(fields[8]);
+
+            if (players.ContainsKey(playerId))
+            {
+                players[playerId] += points;
+            }
+            else
+            {
+                players.Add(playerId, points);
+            }
         }
 
-        Console.WriteLine($"Players: {{{string.Join(", ", players)}}}");
+        var sortedDict = (from entry in players orderby entry.Value descending select entry).Take(10);
+
+
 
         var topPlayers = new string[10];
+        int i = 0;
+        foreach (var kvp in sortedDict)
+        {
+            topPlayers[i] = $"{kvp.Key} - {kvp.Value}";
+
+            i++;
+        }
+
+        Console.WriteLine($"Players: {{{string.Join(", ", topPlayers)}}}");
+        // }
+        // Console.WriteLine($"Players: {{{string.Join(", ", sortedDict)}}}");
+
     }
 }
+
+// Dictionary<string, int> myDict = new Dictionary<string, int>();
+// myDict.Add("one", 1);
+// myDict.Add("four", 4);
+// myDict.Add("two", 2);
+// myDict.Add("three", 3);
