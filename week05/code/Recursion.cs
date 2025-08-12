@@ -183,18 +183,15 @@ public static class Recursion
         var isValidMove = maze.IsValidMove(newList, x, y);
         if (isValidMove)
         {
-            newList.Add((x, y)); // Use this syntax to add to the current path
+            newList.Add((x, y));
             if (x >= maze.Width || y >= maze.Height)
             {
                 newList.Clear();
-                newList.Add((0, 0)); // Use this syntax to add to the current path
                 return;
             }
             else if (maze.IsEnd(x, y))
             {
-                results.Add(newList.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
-                // newList.Clear();
-                // newList.Add((0, 0)); // Use this syntax to add to the current path
+                results.Add(newList.AsString());
                 return;
             }
             else
@@ -212,15 +209,7 @@ public static class Recursion
         else
         {
             newList.Add((-1, -1)); // Use this syntax to add to the current path
-            // newList.Clear();
-            // newList.Add((0, 0)); // Use this syntax to add to the current path
             return;
         }
-
-
-        // TODO Start Problem 5
-        // ADD CODE HERE
-
-        // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
     }
 }
