@@ -43,7 +43,31 @@ public static class Recursion
     /// </summary>
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
-        // TODO Start Problem 2
+
+        if (size - word.Length == 0)
+        {
+            Console.WriteLine(word);
+            results.Add(word);
+        }
+        else if (word.Length <= size)
+        {
+            for (var i = 0; i < letters.Length; i++)
+            {
+                // Make a copy of the letters to pass to the
+                // the next call to permutations.  We need
+                // to remove the letter we just added before
+                // we call permutations again.
+                var lettersLeft = letters.Remove(i, 1);
+
+                // Add the new letter to the word we have so far
+                PermutationsChoose(results, lettersLeft, size, word + letters[i]);
+            }
+        }
+        else
+        {
+            Console.WriteLine(letters);
+        }
+
     }
 
     /// <summary>
@@ -103,7 +127,16 @@ public static class Recursion
         // TODO Start Problem 3
 
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways;
+        if (remember == null) remember = new Dictionary<int, decimal>();
+        if (remember.ContainsKey(s))
+            ways = remember[s];
+        else
+        {
+            ways = CountWaysToClimb(s - 1, remember) + CountWaysToClimb(s - 2, remember) + CountWaysToClimb(s - 3, remember);
+            remember[s] = ways;
+
+        }
         return ways;
     }
 
@@ -122,7 +155,13 @@ public static class Recursion
     /// </summary>
     public static void WildcardBinary(string pattern, List<string> results)
     {
-        // TODO Start Problem 4
+        var index = pattern.IndexOf("*");
+        if (index != -1)
+        {
+            WildcardBinary(pattern[..index] + '1' + pattern[(index + 1)..], results);
+            WildcardBinary(pattern[..index] + '0' + pattern[(index + 1)..], results);
+        }
+        else results.Add(pattern);
     }
 
     /// <summary>
@@ -137,8 +176,47 @@ public static class Recursion
         {
             currPath = new List<ValueTuple<int, int>>();
         }
+        var newList = new List<ValueTuple<int, int>>(currPath);
+        if (newList.Contains((-1, -1)))
+            Console.WriteLine("Innvalid point", x, y);
 
-        // currPath.Add((1,2)); // Use this syntax to add to the current path
+        var isValidMove = maze.IsValidMove(newList, x, y);
+        if (isValidMove)
+        {
+            newList.Add((x, y)); // Use this syntax to add to the current path
+            if (x >= maze.Width || y >= maze.Height)
+            {
+                newList.Clear();
+                newList.Add((0, 0)); // Use this syntax to add to the current path
+                return;
+            }
+            else if (maze.IsEnd(x, y))
+            {
+                results.Add(newList.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+                // newList.Clear();
+                // newList.Add((0, 0)); // Use this syntax to add to the current path
+                return;
+            }
+            else
+            {
+                if (x < maze.Width)
+                    SolveMaze(results, maze, x + 1, y, newList);
+                if (y < maze.Height)
+                    SolveMaze(results, maze, x, y + 1, newList);
+                if (x > 0)
+                    SolveMaze(results, maze, x - 1, y, newList);
+                if (y > 0)
+                    SolveMaze(results, maze, x, y - 1, newList);
+            }
+        }
+        else
+        {
+            newList.Add((-1, -1)); // Use this syntax to add to the current path
+            // newList.Clear();
+            // newList.Add((0, 0)); // Use this syntax to add to the current path
+            return;
+        }
+
 
         // TODO Start Problem 5
         // ADD CODE HERE
